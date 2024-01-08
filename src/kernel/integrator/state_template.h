@@ -67,6 +67,8 @@ KERNEL_STRUCT_MEMBER(ray, float, tmax, KERNEL_FEATURE_PATH_TRACING)
 KERNEL_STRUCT_MEMBER(ray, float, time, KERNEL_FEATURE_PATH_TRACING)
 KERNEL_STRUCT_MEMBER(ray, float, dP, KERNEL_FEATURE_PATH_TRACING)
 KERNEL_STRUCT_MEMBER(ray, float, dD, KERNEL_FEATURE_PATH_TRACING)
+/* Full ray origin derivative with regard to uv. */
+KERNEL_STRUCT_MEMBER(ray, packed_float3, dPdu, KERNEL_FEATURE_RNM)
 KERNEL_STRUCT_END(ray)
 
 /*************************** Intersection result ******************************/

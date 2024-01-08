@@ -32,12 +32,15 @@ static inline tbb::task_arena local_tbb_arena_create(const Device *device)
 /* Get CPUKernelThreadGlobals for the current thread. */
 static inline CPUKernelThreadGlobals *kernel_thread_globals_get(
     vector<CPUKernelThreadGlobals> &kernel_thread_globals)
-{
+{ 
   const int thread_index = tbb::this_task_arena::current_thread_index();
   DCHECK_GE(thread_index, 0);
   DCHECK_LE(thread_index, kernel_thread_globals.size());
 
-  return &kernel_thread_globals[thread_index];
+  auto *ktg = &kernel_thread_globals[thread_index];
+  assert(0 == ((uintptr_t)(ktg) % alignof(CPUKernelThreadGlobals)));
+  return ktg;
+  //return &kernel_thread_globals[thread_index];
 }
 
 PathTraceWorkCPU::PathTraceWorkCPU(Device *device,

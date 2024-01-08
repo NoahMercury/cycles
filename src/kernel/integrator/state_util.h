@@ -13,7 +13,8 @@ CCL_NAMESPACE_BEGIN
 
 ccl_device_forceinline void integrator_state_write_ray(KernelGlobals kg,
                                                        IntegratorState state,
-                                                       ccl_private const Ray *ccl_restrict ray)
+                                                       ccl_private const Ray *ccl_restrict ray,
+                                                       ccl_private float3 dPdu)
 {
   INTEGRATOR_STATE_WRITE(state, ray, P) = ray->P;
   INTEGRATOR_STATE_WRITE(state, ray, D) = ray->D;
@@ -22,6 +23,9 @@ ccl_device_forceinline void integrator_state_write_ray(KernelGlobals kg,
   INTEGRATOR_STATE_WRITE(state, ray, time) = ray->time;
   INTEGRATOR_STATE_WRITE(state, ray, dP) = ray->dP;
   INTEGRATOR_STATE_WRITE(state, ray, dD) = ray->dD;
+  if (kernel_data.kernel_features & KERNEL_FEATURE_RNM) {
+    INTEGRATOR_STATE_WRITE(state, ray, dPdu) = dPdu;
+  }
 }
 
 ccl_device_forceinline void integrator_state_read_ray(KernelGlobals kg,

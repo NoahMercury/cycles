@@ -346,6 +346,9 @@ typedef enum PassType {
   PASS_VOLUME,
   PASS_VOLUME_DIRECT,
   PASS_VOLUME_INDIRECT,
+  PASS_COMBINED_RNM_0,
+  PASS_COMBINED_RNM_1,
+  PASS_COMBINED_RNM_2,
   PASS_CATEGORY_LIGHT_END = 31,
 
   /* Data passes */
@@ -1064,6 +1067,7 @@ typedef struct KernelFilmConvert {
   int pass_indirect;
 
   int pass_combined;
+  int pass_combined_rnm;
   int pass_sample_count;
   int pass_adaptive_aux_buffer;
   int pass_motion_weight;
@@ -1090,7 +1094,7 @@ typedef struct KernelFilmConvert {
   int is_denoised;
 
   /* Padding. */
-  int pad1;
+  //int pad1;
 } KernelFilmConvert;
 static_assert_align(KernelFilmConvert, 16);
 
@@ -1502,6 +1506,9 @@ enum KernelFeatureFlag : uint32_t {
 
   /* MNEE. */
   KERNEL_FEATURE_MNEE = (1U << 25U),
+
+  /* Radiosity Normal Maps. */
+  KERNEL_FEATURE_RNM = (1U << 25U),
 };
 
 /* Shader node feature mask, to specialize shader evaluation for kernels. */

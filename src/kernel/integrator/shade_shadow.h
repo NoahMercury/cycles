@@ -141,6 +141,7 @@ ccl_device_inline bool integrate_transparent_shadow(KernelGlobals kg,
 #endif /* __TRANSPARENT_SHADOWS__ */
 
 ccl_device void integrator_shade_shadow(KernelGlobals kg,
+                                        ConstIntegratorState full_state,
                                         IntegratorShadowState state,
                                         ccl_global float *ccl_restrict render_buffer)
 {
@@ -165,7 +166,7 @@ ccl_device void integrator_shade_shadow(KernelGlobals kg,
     return;
   }
   else {
-    film_write_direct_light(kg, state, render_buffer);
+    film_write_direct_light(kg, full_state, state, render_buffer);
     integrator_shadow_path_terminate(kg, state, DEVICE_KERNEL_INTEGRATOR_SHADE_SHADOW);
     return;
   }

@@ -497,6 +497,7 @@ void Scene::update_kernel_features()
   if (params.hair_shape == CURVE_THICK) {
     kernel_features |= KERNEL_FEATURE_HAIR_THICK;
   }
+  kernel_features |= KERNEL_FEATURE_RNM;
 
   /* Figure out whether the scene will use shader ray-trace we need at least
    * one caustic light, one caustic caster and one caustic receiver to use

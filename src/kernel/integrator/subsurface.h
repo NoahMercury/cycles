@@ -160,7 +160,7 @@ ccl_device_inline bool subsurface_scatter(KernelGlobals kg, IntegratorState stat
   ray.D = -ray.D;
 
   integrator_state_write_isect(kg, state, &ss_isect.hits[0]);
-  integrator_state_write_ray(kg, state, &ray);
+  integrator_state_write_ray(kg, state, &ray, differential_from_compact(ray.P, ray.dP).dx);
 
   /* Advance random number offset for bounce. */
   INTEGRATOR_STATE_WRITE(state, path, rng_offset) += PRNG_BOUNCE_NUM;

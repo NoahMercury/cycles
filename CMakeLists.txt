@@ -70,7 +70,7 @@ endif()
 set(CYCLES_STANDALONE_REPOSITORY TRUE)
 
 # Force standalone build.
-set(WITH_CYCLES_STANDALONE TRUE)
+#set(WITH_CYCLES_STANDALONE TRUE)
 
 # Global compile definitions since add_definitions() adds for all.
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS

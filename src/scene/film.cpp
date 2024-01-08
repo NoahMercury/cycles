@@ -328,6 +328,17 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
       case PASS_VOLUME_DIRECT:
         kfilm->pass_volume_direct = kfilm->pass_stride;
         break;
+      case PASS_COMBINED_RNM_0:
+        kfilm->pass_combined_rnm_0 = kfilm->pass_stride;
+        break;
+      case PASS_COMBINED_RNM_1:
+        static_assert(PASS_COMBINED_RNM_1 == PASS_COMBINED_RNM_0 + 1);
+        kfilm->pass_combined_rnm_1 = kfilm->pass_stride;
+        break;
+      case PASS_COMBINED_RNM_2:
+        static_assert(PASS_COMBINED_RNM_2 == PASS_COMBINED_RNM_1 + 1);
+        kfilm->pass_combined_rnm_2 = kfilm->pass_stride;
+        break;
 
       case PASS_BAKE_PRIMITIVE:
         kfilm->pass_bake_primitive = kfilm->pass_stride;

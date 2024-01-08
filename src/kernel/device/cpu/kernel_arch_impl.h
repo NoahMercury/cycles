@@ -94,7 +94,7 @@ CCL_NAMESPACE_BEGIN
   void KERNEL_FUNCTION_FULL_NAME(integrator_##name)( \
       const KernelGlobalsCPU *kg, IntegratorStateCPU *state, ccl_global float *render_buffer) \
   { \
-    KERNEL_INVOKE(name, kg, &state->shadow, render_buffer); \
+    KERNEL_INVOKE(name, kg, state, &state->shadow, render_buffer); \
   }
 
 DEFINE_INTEGRATOR_INIT_KERNEL(init_from_camera)

@@ -65,6 +65,9 @@ const NodeEnum *Pass::get_type_enum()
     pass_type_enum.insert("volume", PASS_VOLUME);
     pass_type_enum.insert("volume_direct", PASS_VOLUME_DIRECT);
     pass_type_enum.insert("volume_indirect", PASS_VOLUME_INDIRECT);
+    pass_type_enum.insert("combined_rnm", PASS_COMBINED_RNM_0);
+    pass_type_enum.insert("combined_rnm", PASS_COMBINED_RNM_1);
+    pass_type_enum.insert("combined_rnm", PASS_COMBINED_RNM_2);
 
     /* Data passes. */
     pass_type_enum.insert("depth", PASS_DEPTH);
@@ -158,6 +161,9 @@ PassInfo Pass::get_info(const PassType type, const bool include_albedo, const bo
       pass_info.num_components = 0;
       break;
     case PASS_COMBINED:
+    case PASS_COMBINED_RNM_0:
+    case PASS_COMBINED_RNM_1:
+    case PASS_COMBINED_RNM_2:
       pass_info.num_components = is_lightgroup ? 3 : 4;
       pass_info.use_exposure = true;
       pass_info.support_denoise = !is_lightgroup;

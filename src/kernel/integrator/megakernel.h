@@ -32,7 +32,7 @@ ccl_device void integrator_megakernel(KernelGlobals kg,
           integrator_intersect_shadow(kg, &state->shadow);
           break;
         case DEVICE_KERNEL_INTEGRATOR_SHADE_SHADOW:
-          integrator_shade_shadow(kg, &state->shadow, render_buffer);
+          integrator_shade_shadow(kg, state, &state->shadow, render_buffer);
           break;
         default:
           kernel_assert(0);
@@ -49,7 +49,7 @@ ccl_device void integrator_megakernel(KernelGlobals kg,
           integrator_intersect_shadow(kg, &state->ao);
           break;
         case DEVICE_KERNEL_INTEGRATOR_SHADE_SHADOW:
-          integrator_shade_shadow(kg, &state->ao, render_buffer);
+          integrator_shade_shadow(kg, state, &state->ao, render_buffer);
           break;
         default:
           kernel_assert(0);

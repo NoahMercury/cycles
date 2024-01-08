@@ -310,6 +310,20 @@ ccl_device_inline void film_write_combined_pass(KernelGlobals kg,
   film_write_adaptive_buffer(kg, sample, contribution, buffer);
 }
 
+/* Write combined RNM pass. */
+ccl_device_inline void film_write_combined_rnm_pass(KernelGlobals kg,
+                                                const uint rnm_basis_index,
+                                                const Spectrum contribution,
+                                                ccl_global float *ccl_restrict buffer)
+{
+  int pass = rnm_basis_index == 0
+    ? kernel_data.film.pass_combined_rnm_0
+      : (rnm_basis_index == 1
+        ? kernel_data.film.pass_combined_rnm_1
+          : kernel_data.film.pass_combined_rnm_2);
+  film_write_pass_spectrum(buffer + pass, contribution);
+}
+
 /* Write combined pass with transparency. */
 ccl_device_inline void film_write_combined_transparent_pass(KernelGlobals kg,
                                                             const uint32_t path_flag,
@@ -431,6 +445,7 @@ ccl_device_inline void film_write_emission_or_background_pass(
 
 /* Write light contribution to render buffer. */
 ccl_device_inline void film_write_direct_light(KernelGlobals kg,
+                                               ConstIntegratorState full_state,
                                                ConstIntegratorShadowState state,
                                                ccl_global float *ccl_restrict render_buffer)
 {
@@ -460,6 +475,36 @@ ccl_device_inline void film_write_direct_light(KernelGlobals kg,
 
   /* Direct light shadow. */
   film_write_combined_pass(kg, path_flag, sample, contribution, buffer);
+
+  const int all_rnm_passmasks = PASSMASK(COMBINED_RNM_0) |
+                                PASSMASK(COMBINED_RNM_1) |
+                                PASSMASK(COMBINED_RNM_2);
+  if (kernel_data.film.light_pass_flag & all_rnm_passmasks) {
+    /* Reconstruct the tangent basis, then transform the RNM basis with it. */
+    float3 tangent = INTEGRATOR_STATE(full_state, ray, dPdu);
+    float3 N = INTEGRATOR_STATE(full_state, ray, D);
+    const float3 dx0 = cross(tangent, N);
+    const float3 dx = normalize(dx0);
+    const float3 dy = normalize(cross(N, dx0));
+    Transform tangent_basis = make_transform(
+        dx.x, dx.y, dx.z, 0.0f, dy.x, dy.y, dy.z, 0.0f, N.x, N.y, N.z, 0.0f);
+
+    const float3 rnmBases[3] = {
+        make_float3(-1.0f / (2.0f * M_SQRT3_F), 1.0f / M_SQRT2_F, 1.0f / M_SQRT3_F),
+        make_float3(-1.0f / (2.0f * M_SQRT3_F), -1.0f / M_SQRT2_F, 1.0f / M_SQRT3_F),
+        make_float3(sqrtf(2.0f / 3.0f), 0.0f, 1.0f / M_SQRT3_F)};
+
+    /* Project the incoming contribution onto the 3 bases. */
+    const float3 L = INTEGRATOR_STATE(state, shadow_ray, D);
+    for (int i = 0; i < 3; ++i) {
+      if (kernel_data.film.light_pass_flag & (PASSMASK(COMBINED_RNM_0) << i)) {
+        const float3 projection_axis = transform_direction(&tangent_basis, rnmBases[i]);
+        const float projected_strength = max(0.0f, dot(L, projection_axis));
+        const Spectrum projected_contribution = contribution * projected_strength;
+        film_write_combined_rnm_pass(kg, i, projected_contribution, buffer);
+      }
+    }
+  }
 
 #ifdef __PASSES__
   if (kernel_data.film.light_pass_flag & PASS_ANY) {

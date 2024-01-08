@@ -81,7 +81,7 @@ ccl_device bool integrator_init_from_camera(KernelGlobals kg,
     }
 
     /* Write camera ray to state. */
-    integrator_state_write_ray(kg, state, &ray);
+    integrator_state_write_ray(kg, state, &ray, differential_from_compact(ray.P, ray.dP).dx);
   }
 
   /* Initialize path state for path integration. */
